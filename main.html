@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shorcut icon" href="./logo.webp">
+    <title>Cuanto Falta 🥵</title>
+</head>
+<body>
+    <h1>Cuantos dias faltan para que termine la temporada.</h1>
+    <p>Selecciona quien eres: </p>
+    <select name="usuarios" id="PJ">
+        <option value="Benja">Bergamin🧙🏿‍♂️</option>
+        <option value="Jose">JoSEX😐🧹</option>
+        <option value="Luis">Luchito🤥</option>
+        <option value="Nico1">Piscolas🥃</option>
+        <option value="Nico2">Nico^2🎹</option>
+        <option value="Pablo">Pabletex🏍</option>
+        <option value="Seba">SEXbita🦾</option>
+        <option value="Maca">Maca⚽</option>
+        <option value="Nico3">Nico^3🎮</option>
+        <option value="Tito">Tito💻</option>
+        </select>
+        <br>
+        <button type="button" id="boton" onclick="calcular()">Calcular</button>
+        <p id="DATA"></p>
+
+        <h2>Registro de horas extras</h2>
+        <form action="extraTimeForm">
+            <label for="minutes">Minutos:</label>
+            <input type="number" id="minutes" placeholder="Ingrese Minutos" required>
+            <button type="button" onclick="registrarHoras()">Registrar</button>
+        </form>
+
+        <ul id="extraTimeList"></ul>
+        <button id="resetButton">Resetear todo</button>
+        <button id="removeMinutesButton">Quitar minutos</button>
+        <input type="number" id="minutesToRemove" placeholder="Minutos a quitar">
+    <script src="script.js"></script>
+</body>
+</html>
