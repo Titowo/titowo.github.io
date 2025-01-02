@@ -7,8 +7,11 @@
     <link rel="shorcut icon" href="./logo.webp">
     <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
     <title>Cuanto Falta 🥵</title>
+    <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-database.js"></script>
 </head>
 <body>
+    <script src="./script.js"></script>
     <h1>Cuantos dias faltan para que termine la temporada.</h1>
     <p>Selecciona quien eres: </p>
     <select name="usuarios" id="PJ">
@@ -22,21 +25,20 @@
         <option value="Maca">Maca⚽</option>
         <option value="Nico3">Nico^3🎮</option>
         <option value="Tito">Tito💻</option>
-        </select>
-        <br>
-        <button type="button" id="boton" onclick="calcular()">Calcular</button>
-        <p id="DATA"></p>
+    </select>
+    <br>
+    <button type="button" id="boton" onclick="calcular()">Calcular</button>
+    <p id="DATA"></p>
 
-        <h2>Registro de horas extras</h2>
-        <form action="extraTimeForm">
-            <label for="minutes">Minutos:</label>
-            <input type="number" id="minutes" placeholder="Ingrese Minutos" required>
-            <button type="button" onclick="registrarHoras()">Registrar</button>
-        </form>
-        <ul id="extraTimeList"></ul>
-        <button id="resetButton">Resetear todo</button>
-        <button id="removeMinutesButton">Quitar minutos</button>
-        <input type="number" id="minutesToRemove" placeholder="Minutos a quitar">
-    <script src="script.js"></script>
+    <h2>Registro de horas extras</h2>
+    <form action="extraTimeForm">
+        <label for="minutes">Minutos:</label>
+        <input type="number" id="minutes" placeholder="Ingrese Minutos" required>
+        <button type="button" onclick="registrarHoras()">Registrar</button>
+    </form>
+    <ul id="extraTimeList"></ul>
+    <button id="resetButton">Resetear todo</button>
+    <button id="removeMinutesButton">Quitar minutos</button>
+    <input type="number" id="minutesToRemove" placeholder="Minutos a quitar">
 </body>
 </html>
