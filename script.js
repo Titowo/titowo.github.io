@@ -1,3 +1,32 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-analytics.js";
+
+
+// Configuración de Firebase (usa tu propia configuración desde Firebase Console)
+const firebaseConfig = {
+
+    apiKey: "AIzaSyD_VM3EZ1GnUe-a73Eoc-cXP4tkNT3NiAw",
+
+    authDomain: "munici-b68a9.firebaseapp.com",
+
+    databaseURL: "https://munici-b68a9-default-rtdb.firebaseio.com",
+
+    projectId: "munici-b68a9",
+
+    storageBucket: "munici-b68a9.firebasestorage.app",
+
+    messagingSenderId: "61750848581",
+
+    appId: "1:61750848581:web:97d214420b9aa87106072c",
+
+    measurementId: "G-DJMFF4KX9V"
+
+  };
+
+// Inicializar Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 // Fecha de hoy y fecha meta
 const fechaHoy = new Date();
 const fechaMeta = new Date(2025, 1, 28); // Mes 1 = febrero
@@ -46,60 +75,50 @@ function calcular() {
     elem.textContent = "Faltan " + diasFaltantes + " días para que termine la temporada.";
 }
 
-// Función para registrar horas extra
+// Función para registrar horas en Firebase
 function registrarHoras() {
     const jugador = document.getElementById("PJ").value;
     const minutos = parseInt(document.getElementById("minutes").value, 10);
-    const lista = document.getElementById("extraTimeList");
 
     if (isNaN(minutos) || minutos <= 0) {
         alert("Por favor, ingresa un número válido de minutos.");
         return;
     }
 
-    // Actualizar los minutos acumulados
-    if (!registroHoras[jugador]) {
-        registroHoras[jugador] = 0;
-    }
-    registroHoras[jugador] += minutos;
-
-    // Guardar los datos en el localStorage
-    localStorage.setItem('registroHoras', JSON.stringify(registroHoras));
-
-    // Actualizar la lista visual
-    actualizarLista();
-    document.getElementById("minutes").value = ""; // Limpiar el campo de entrada
+    // Leer los minutos actuales y actualizar en Firebase
+    const jugadorRef = firebase.database().ref(`registroHoras/${jugador}`);
+    jugadorRef.get().then((snapshot) => {
+        const minutosPrevios = snapshot.val() || 0;
+        jugadorRef.set(minutosPrevios + minutos);
+        actualizarLista();
+        document.getElementById("minutes").value = ""; // Limpiar el campo de entrada
+    })
 }
-
+// Función para actualizar la lista visual desde Firebase
 function actualizarLista() {
     const lista = document.getElementById("extraTimeList");
     lista.innerHTML = ""; // Limpiar la lista
 
-    // Recorrer el objeto de registro de horas y agregar los elementos a la lista
-    for (const [jugador, minutos] of Object.entries(registroHoras)) {
-        const li = document.createElement("li");
-        li.textContent = `${jugador}: ${minutos} minutos`;
-        lista.appendChild(li);
-    }
+    firebase.database().ref('registroHoras').once('value').then((snapshot) => {
+        const datos = snapshot.val();
+        for (const jugador in datos) {
+            const li = document.createElement("li");
+            li.textContent = `${jugador}: ${datos[jugador]} minutos`;
+            lista.appendChild(li);
+        }
+    });
 }
 
-// Función para resetear todas las horas
+// Función para resetear datos en Firebase
 function resetearHoras() {
-    // Confirmar con el usuario antes de resetear
     const confirmacion = confirm("¿Estás seguro de que deseas resetear todas las horas?");
     if (confirmacion) {
-        // Resetear el objeto de horas
-        localStorage.removeItem('registroHoras');
-        // Limpiar el objeto en memoria
-        for (const jugador in registroHoras) {
-            delete registroHoras[jugador];
-        }
-        // Actualizar la lista visual
+        firebase.database().ref('registroHoras').remove();
         actualizarLista();
     }
 }
 
-// Función para quitar minutos de un jugador específico
+// Función para quitar minutos de un jugador en Firebase
 function quitarMinutos() {
     const jugador = document.getElementById("PJ").value;
     const minutosAQuitar = parseInt(document.getElementById("minutesToRemove").value, 10);
@@ -109,23 +128,22 @@ function quitarMinutos() {
         return;
     }
 
-    if (!registroHoras[jugador] || registroHoras[jugador] < minutosAQuitar) {
-        alert(`No se pueden quitar ${minutosAQuitar} minutos porque ${jugador} no tiene suficientes minutos registrados.`);
-        return;
-    }
+    const jugadorRef = firebase.database().ref(`registroHoras/${jugador}`);
+    jugadorRef.get().then((snapshot) => {
+        const minutosPrevios = snapshot.val() || 0;
 
-    // Restar los minutos del jugador
-    registroHoras[jugador] -= minutosAQuitar;
+        if (minutosPrevios < minutosAQuitar) {
+            alert(`No se pueden quitar ${minutosAQuitar} minutos porque ${jugador} no tiene suficientes minutos registrados.`);
+            return;
+        }
 
-    // Guardar los datos en el localStorage
-    localStorage.setItem('registroHoras', JSON.stringify(registroHoras));
-
-    // Actualizar la lista visual
-    actualizarLista();
-    document.getElementById("minutesToRemove").value = ""; // Limpiar el campo de entrada
+        jugadorRef.set(minutosPrevios - minutosAQuitar);
+        actualizarLista();
+        document.getElementById("minutesToRemove").value = ""; // Limpiar el campo de entrada
+    });
 }
 
-// Cargar la lista de horas extras desde el localStorage al inicio
+// Cargar los datos iniciales
 actualizarLista();
 
 // Añadir eventos a los botones
